@@ -26,18 +26,18 @@ jobs:
             generated_bin: scyther-w32.exe
             final_bin: scyther-w32.exe
             dependencies: cmake build-essential flex bison gcc-multilib python3-minimal mingw-w64 gcc-mingw-w64-i686 g++-mingw-w64-i686
-          # - target: macos-intel
-          #   os: macos-13
-          #   script: ./src/subbuild-mac-intel.sh
-          #   generated_bin: scyther-mac
-          #   final_bin: scyther-mac-intel
-          #   dependencies: cmake flex bison
-          - target: macos-arm
-            os: macos-15
-            script: ./src/subbuild-mac-arm.sh
+          - target: macos-intel
+            os: macos-13
+            script: ./src/subbuild-mac-intel.sh
             generated_bin: scyther-mac
-            final_bin: scyther-mac-arm
+            final_bin: scyther-mac-intel
             dependencies: cmake flex bison
+          # - target: macos-arm
+          #   os: macos-15
+          #   script: ./src/subbuild-mac-arm.sh
+          #   generated_bin: scyther-mac
+          #   final_bin: scyther-mac-arm
+          #   dependencies: cmake flex bison
 
     steps:
       - name: Checkout
@@ -73,7 +73,7 @@ jobs:
           
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add "$TARGET_FILE"
+          git add -f "$TARGET_FILE"
           
           if git diff --quiet --staged; then
             echo "No changes to ${{ matrix.final_bin }}"

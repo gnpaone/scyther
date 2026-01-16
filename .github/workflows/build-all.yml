@@ -42,25 +42,25 @@ jobs:
       matrix:
         include:
           - target: linux
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             script: ./src/subbuild-unix-unix.sh
             artifact_name: scyther-linux
             artifact_path: gui/Scyther/scyther-linux
             dependencies: cmake build-essential flex bison gcc-multilib python3-minimal
           - target: win32
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             script: ./src/subbuild-unix-w32.sh
             artifact_name: scyther-win32.exe
             artifact_path: gui/Scyther/scyther-w32.exe
             dependencies: cmake build-essential flex bison gcc-multilib python3-minimal mingw-w64 gcc-mingw-w64-i686 g++-mingw-w64-i686
           - target: macos-intel
-            os: macos-13 # Intel Mac
+            os: macos-15
             script: ./src/subbuild-mac-intel.sh
             artifact_name: scyther-mac-intel
             artifact_path: gui/Scyther/scyther-mac
             dependencies: cmake flex bison
           - target: macos-arm
-            os: macos-14 # ARM Mac
+            os: macos-15-arm64
             script: ./src/subbuild-mac-arm.sh
             artifact_name: scyther-mac-arm
             artifact_path: gui/Scyther/scyther-mac
@@ -70,6 +70,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          repository: cascremers/scyther
           ref: ${{ inputs.tag }}
 
       - name: Install Dependencies

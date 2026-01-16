@@ -1,0 +1,50 @@
+name: Update Workflow Tags
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  update-tags:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Fetch Tags and Update Workflow
+        id: update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAGS=$(gh api repos/cascremers/scyther/tags --jq '.[].name')
+          YAML_TAGS=""
+          while IFS= read -r tag; do
+            YAML_TAGS="${YAML_TAGS}          - ${tag}\n"
+          done <<< "$TAGS"
+          
+          FILE=".github/workflows/build-all.yml"
+          awk -v tags="$YAML_TAGS" '
+            /# TAGS_START/ { print; print tags; found=1; next }
+            /# TAGS_END/ { found=0 }
+            !found { print }
+          ' "$FILE" > "${FILE}.tmp" && mv "${FILE}.tmp" "$FILE"
+          
+          if ! git diff --quiet; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push
+        if: steps.update.outputs.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/build-all.yml
+          git commit -m "chore: update build tags options"
+          git push

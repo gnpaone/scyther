@@ -42,13 +42,13 @@ jobs:
       matrix:
         include:
           - target: linux
-            os: ubuntu-22.04
+            os: ubuntu-24.04
             script: ./src/subbuild-unix-unix.sh
             artifact_name: scyther-linux
             artifact_path: gui/Scyther/scyther-linux
             dependencies: cmake build-essential flex bison gcc-multilib python3-minimal
           - target: win32
-            os: ubuntu-22.04
+            os: ubuntu-24.04
             script: ./src/subbuild-unix-w32.sh
             artifact_name: scyther-win32.exe
             artifact_path: gui/Scyther/scyther-w32.exe
@@ -59,12 +59,12 @@ jobs:
             artifact_name: scyther-mac-intel
             artifact_path: gui/Scyther/scyther-mac
             dependencies: cmake flex bison
-          - target: macos-arm
-            os: macos-15-arm64
-            script: ./src/subbuild-mac-arm.sh
-            artifact_name: scyther-mac-arm
-            artifact_path: gui/Scyther/scyther-mac
-            dependencies: cmake flex bison
+          # - target: macos-arm
+          #   os: macos-15-arm64
+          #   script: ./src/subbuild-mac-arm.sh
+          #   artifact_name: scyther-mac-arm
+          #   artifact_path: gui/Scyther/scyther-mac
+          #   dependencies: cmake flex bison
 
     steps:
       - name: Checkout
@@ -87,8 +87,10 @@ jobs:
 
       - name: Build
         run: |
-          chmod +x ${{ matrix.script }}
-          ${{ matrix.script }}
+          mkdir -p gui/Scyther
+          cd src
+          chmod +x $(basename ${{ matrix.script }})
+          ./$(basename ${{ matrix.script }})
         shell: bash
 
       - name: Upload Artifact

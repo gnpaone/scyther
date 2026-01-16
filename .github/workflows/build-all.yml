@@ -27,7 +27,7 @@ jobs:
             final_bin: scyther-w32.exe
             dependencies: cmake build-essential flex bison gcc-multilib python3-minimal mingw-w64 gcc-mingw-w64-i686 g++-mingw-w64-i686
           - target: macos-intel
-            os: macos-13
+            os: macos-15
             script: ./src/subbuild-mac-intel.sh
             generated_bin: scyther-mac
             final_bin: scyther-mac-intel
